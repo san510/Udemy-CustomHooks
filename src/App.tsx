@@ -1,35 +1,12 @@
 import "./styles.css";
-import axios from "axios";
 import { UserCard } from "./components/UserCard";
-import { User } from "./types/api/user";
-import { UserProfile } from "./types/userProfile";
-import { useState } from "react";
+import { useAllUsers } from "./hooks/useAllUsers";
 
 export default function App() {
-  const [userProfiles, setUserProfiles] = useState<Array<UserProfile>>([]);
-  const [isloading, setIsLoading] = useState(false);
-  const [error, setError] = useState(false);
+  const { getUsers, userProfiles, isloading, error } = useAllUsers();
 
   const onClickFetchUser = () => {
-    setIsLoading(true);
-    setError(false);
-    axios
-      .get<Array<User>>("https://jsonplaceholder.typicode.com/users")
-      .then((res) => {
-        const data = res.data.map((user) => ({
-          id: user.id,
-          name: `${user.name}(${user.username})`,
-          email: user.email,
-          address: `${user.address.city}${user.address.suite}${user.address.street}`
-        }));
-        setUserProfiles(data);
-      })
-      .catch(() => {
-        setError(true);
-      })
-      .finally(() => {
-        setIsLoading(false);
-      });
+    getUsers();
   };
 
   return (
